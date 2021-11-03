@@ -14,12 +14,16 @@ class SharedMemoryDictSerializer(Protocol):
 
 
 class JSONSerializer:
+
+    encoder = json.JSONEncoder
+    decoder = json.JSONDecoder
+
     def dumps(self, obj: dict) -> bytes:
-        return json.dumps(obj).encode() + NULL_BYTE
+        return json.dumps(obj, cls=self.encoder).encode() + NULL_BYTE
 
     def loads(self, data: bytes) -> dict:
         data = data.split(NULL_BYTE, 1)[0]
-        return json.loads(data)
+        return json.loads(data, cls=self.decoder)
 
 
 class PickleSerializer:
